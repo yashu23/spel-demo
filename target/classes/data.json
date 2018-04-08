@@ -1,0 +1,9 @@
+{
+  "event": {
+    "properties": {
+      "name": "city",
+      "value": "melbourne",
+      "weatherF": "70"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "cityName": "expr#input.get('event').get('properties').get('value')",
+  "weather": "expr#input.get('event').get('properties').get('weatherF')",
+  "countryName": "Australia",
+  "thisElement": [
+    {
+      "cityName": "expr#input.get('event').get('properties').get('value')"
+    }
+  ] ,
+  "newArrayElement": [
+    "one",
+    "expr#input.get('event').get('properties').get('weatherF')"
+  ]
+}
