@@ -1,3 +1,5 @@
+package com.lucky5;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -6,20 +8,19 @@ import org.apache.commons.jexl3.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * Project      : speldemo
- * Name         : PACKAGE_NAME.SpelExample.java
- * Author       : yashpalrawat
- * Created      : 8/04/2018 10:28
- * Description  : <Insert class description>
+ * author : Yashpal_Rawat
+ * lastModifiedDate : 12/04/2018 6:23 PM
  */
-public class SpelExample {
-
+public class MapperService {
     // Create or retrieve an engine
     final static JexlEngine jexl = new JexlBuilder().create();
 
@@ -31,7 +32,7 @@ public class SpelExample {
      * @throws Exception
      */
     private static final String readFile(final String fileName) throws Exception {
-        Path path = Paths.get(SpelExample.class.getClassLoader()
+        Path path = Paths.get(MapperService.class.getClassLoader()
                 .getResource(fileName).toURI());
 
         StringBuilder data = new StringBuilder();
@@ -71,25 +72,11 @@ public class SpelExample {
     }
 
     private static Object getValue(String value, JexlContext jc) {
-        System.out.println("expression " + value);
         if (value.contains("expr#")) {
             String expressionString = value.substring(value.indexOf("expr#") + 5);
-            /*String[] tokens = value.substring(value.indexOf("expr#") + 5).split("\\.");
-
-            if (tokens.length > 0) {
-                StringBuilder strb = new StringBuilder(tokens[0]);
-                for (int i = 1; i < tokens.length; i++) {
-                    strb.append(".get('" + tokens[i] + "')");
-                }
-                expressionString = strb.toString();
-            }*/
             System.out.println("final expression :: " + expressionString);
-
-
-
             JexlExpression e = jexl.createExpression(expressionString);
             System.out.println("eval expression => " + e.getSourceText());
-
 
             // Now evaluate the expression, getting the result
             Object o = e.evaluate(jc);
@@ -105,62 +92,56 @@ public class SpelExample {
             return value;
     }
 
+    public static void print(JsonNode node) {
+        System.out.println(node);
+    }
+
     public static void main(String[] args) throws Exception {
 
-        String templateJson = readFile("mapper_ncdstatus.json");
+        String templateJson = readFile("template.json");
 
         String data = readFile("nal_response.json");
-        data = data.replace("\r\n","").replace("\\\"","");
+        data = data.replace("\\r\\n","").replace("\\","").replace("\"{","{").replace("}\"","}");
 
+        //System.out.println(data);
 
-        final String apiRequest = readFile("nal_api_response.json");
+        //final String apiRequest = readFile("nal_api_response.json");
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        JsonNode jsonTree = mapper.readTree(data.toString());
+        JsonNode jsonTree = mapper.readTree(data);
         JexlContext jc = new MapContext();
         jc.set("input", jsonTree);
+
+        System.out.println("Raw api response => " + mapper.writeValueAsString(jsonTree));
 
         // Populate template json
         Pattern pattern = Pattern.compile("(\\{)(\\S+)(\\})");
         Matcher matcher = pattern.matcher(templateJson);
-        String output;
 
         while(matcher.find()) {
             String jsonPointer = matcher.group(2);
-            //System.out.println("jsonPointer => " + jsonPointer);
-            JsonNode node = jsonTree.at(jsonPointer);
-            System.out.println(jsonPointer + " => " + node.textValue());
-            templateJson = templateJson.replace("{" + jsonPointer + "}", node.textValue());
+            JsonNode node = jsonTree.at(jsonPointer.trim());
+            if (node != null) {
+                System.out.println(jsonPointer + " => " + node.asText());
+                templateJson = templateJson.replaceAll("{" + jsonPointer + "}", node.asText());
+            } else {
+                System.out.println(jsonPointer + " => null");
+            }
         }
 
-        // Add template json to apiRequest
+        System.out.println("translated json => " + templateJson);
 
-        //var mapper = new('com.fasterxml.jackson.databind.ObjectMapper');
-        //var input = mapper.readValue(data.toString(), java.util.Map.class);
-
-        //JexlScript script = jexl.createScript(scriptJs);
-        //script.execute(jc);
-        //Map<String, Object> valueMap = (Map<String, Object>) script.execute(jc);
-
-
-        //JsonNode rootNode = 
+        //JsonNode rootNode =
         Map<String, Object> valueMap = mapper.readValue(templateJson, Map.class);
 
-        //evaluateJsonNode(rootNode, jc);
         evaluateDataMap(valueMap, jc);
 
-        Map map = updateMasterMap(valueMap, mapper.readValue(apiRequest, Map.class));
+       // Map map = updateMasterMap(valueMap, mapper.readValue(apiRequest, Map.class));
 
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        //System.out.println("value map json " + mapper.writeValueAsString(valueMap));
-
-        System.out.println("new json document "  + mapper.writeValueAsString(map));
-
-        // Create an expression
-//        String jexlExp = "data.get('event').get('properties').get('weatherF') > 100 " +
-//                "? data.get('event').get('properties').get('value') : 0";
-
+        System.out.println("new json document "  + mapper.writeValueAsString(valueMap));
     }
 
     private static Map updateMasterMap(Map<String, Object> valueMap, Map map) {

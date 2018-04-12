@@ -1,0 +1,99 @@
+{
+  "nbnCorrelationId": "dfafasdf",
+  "data": {
+    "properties": {
+      "NCD UNI-D Status": {
+        "testName": "NCD UNI-D Status",
+        "properties": {
+          "AVC ID": "AVCxxxxx",
+          "TEST REFERENCE ID": "TRI000001001819",
+          "WF TEST REFERENCE ID": "WRI900001001785"
+        }
+      }
+    },
+    "workflowTestRefId": "WRI900000200406",
+    "ssCode": "",
+    "channel": "CSC",
+    "deducedFaultType": "",
+    "wfRole": "",
+    "euSymptom": "",
+    "dataMapIB2B": {
+      "TC1 BANDWIDTH PROFILE": "D5_U5_Mbps_TC1_C",
+      "SERVICE SPEED TIER": "D12_U1_Mbps_TC4_P, D0.15_U0.15_Mbps_TC1_C",
+      "ENNIMAP1": {
+        "IP ADDRESS": "192.168.4.69",
+        "S-VLAN": "3314",
+        "IP Address": "192.168.4.69",
+        "NODE ID": "SWEFS000001DV",
+        "E-NNI LAG ID": "108",
+        "C-VLAN": "1007",
+        "Node ID": "SWEFS000001DV"
+      },
+      "PRIID": "PRI000068246002",
+      "AVCResourceID": "ALK015803301008",
+      "CVCLOGICALID": "CVC000000455372",
+      "COMMON TRAFFIC CLASSES": [
+        "TC4",
+        "TC1"
+      ],
+      "INNIMAP2": {
+        "IP ADDRESS": "192.168.4.68",
+        "S-VLAN": "3314",
+        "IP Address": "192.168.4.68",
+        "NODE ID": "SWEAS0000002DV",
+        "I-NNI LAG ID": "44",
+        "C-VLAN": "1007",
+        "Node ID": "SWEAS0000002DV"
+      },
+      "INNIMAP1": {
+        "IP ADDRESS": "192.168.4.67",
+        "S-VLAN": "3314",
+        "IP Address": "192.168.4.67",
+        "NODE ID": "SWEAS0000001DV",
+        "I-NNI LAG ID": "44",
+        "C-VLAN": "1007",
+        "Node ID": "SWEAS0000001DV"
+      },
+      "CVC RESOURCE ID": "CLK000000455372",
+      "AVCTYPE": "AVC-D",
+      "OLTMAP": {
+        "IP ADDRESS": "10.32.23.4",
+        "Shelf Number": "1",
+        "NTD number": "1",
+        "Slot number": "LT1",
+        "SLOT NUMBER": "LT1",
+        "PON PORT NUMBER": "6",
+        "SHELF NUMBER": "1",
+        "IP Address": "10.32.23.4",
+        "Rack Number": "1",
+        "ID": "SWOLT0000003DV",
+        "PON Port number": "6",
+        "RACK NUMBER": "1",
+        "NTD NUMBER": "1"
+      },
+      "PRIMARY ACCESS TECHNOLOGY": "Fibre To The Curb",
+      "LocationID": "LOC000156948854",
+      "AVCID": "AVC015803301007",
+      "BANDWIDTH PROFILE": "D12_U1_Mbps_TC4_P, D0.15_U0.15_Mbps_TC1_C",
+      "POI NAME": "6NTF",
+      "TC4 BANDWIDTH PROFILE": "D150_U150_Mbps_TC4_C",
+      "TC2 Bandwidth Profile": "D0_U0_Mbps_TC2_C",
+      "Bandwidth Profile": "D12_U1_Mbps_TC4_P, D0.15_U0.15_Mbps_TC1_C",
+      "CVC Resource ID": "CLK000000455372",
+      "Primary Access Technology": "Fibre To The Curb",
+      "ACCESSSEEKERID": "ASI000000221967",
+      "LOCATIONID": "LOC000156948854",
+      "AccessSeekerID": "ASI000000221967",
+      "AVCRESOURCEID": "ALK015803301008",
+      "CVCLogicalID": "CVC000000455372",
+      "TC2 BANDWIDTH PROFILE": "D0_U0_Mbps_TC2_C",
+      "AVCType": "AVC-D",
+      "Service Speed Tier": "D12_U1_Mbps_TC4_P, D0.15_U0.15_Mbps_TC1_C",
+      "TC4 Bandwidth Profile": "D150_U150_Mbps_TC4_C",
+      "TC1 Bandwidth Profile": "D5_U5_Mbps_TC1_C",
+      "ELEMENTMGR": "SAM",
+      "ElementMgr": "SAM",
+      "POI Name": "6NTF"
+    }
+  }
+}

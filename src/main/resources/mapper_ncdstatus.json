@@ -1,0 +1,61 @@
+{
+  "workflowName": "NCD UNI-D Status",
+  "workflowTestReferenceId": "WRI612345678901",
+  "testReferenceId": "TRI000123456789",
+  "serviceId": "AVC000028726705",
+  "diagnosticDetails": {
+    "type": "NCD UNI-D Status",
+    "status": "Completed",
+    "result": "Failed",
+    "ethernetPortAdminState": "Unlocked",
+    "ethernetPortOperationalState": "Down",
+    "ethernetPortCurrentBitRate": "10",
+    "ethernetPortMaxBitRate": "Auto",
+    "ethernetPortBitRateUnitOfMeasure": "Mbps",
+    "ethernetPortCurrentDuplexMode": "Half",
+    "ethernetPortConfiguredDuplexMode": "Auto",
+    "reversePowerLineCurrent": "50",
+    "reversePowerLineCurrentUnitOfMeasure": "mA",
+    "reversePowerLineVoltage": "59",
+    "reversePowerLineVoltageUnitOfMeasure": "V",
+    "reversePowerStatus": "Established",
+    "reversePowerTemperature": "59",
+    "reversePowerTemperatureUnitOfMeasure": "C"
+  },
+  "data": {
+    "result": "1",
+    "testName": "NCD UNI-D Status",
+    "resolutionText": [
+      "NCD Operational state down. Please refer to FTTC NTADS user guide."
+    ],
+    "errors": [
+      "Successfully retrieved the details from NAL"
+    ],
+    "resolution": [
+      "NCD_UNID_PORT_OS_DOWN"
+    ],
+    "properties": {
+      "AVC ID": "AVC400005090617",
+      "TEST REFERENCE ID": "TRI000001001819",
+      "WF TEST REFERENCE ID": "WRI900001001785",
+      "NCD UNI-D PORT ADMIN STATE": "Unlocked",
+      "NCD UNI-D PORT OPERATIONAL STATE": "Down",
+      "NCD UNI-D ETHERNET PORT SPEED AND DUPLEX": "1000/Full",
+      "NCD UNI-D ETHERNET PORT CONFIGURATION": "1000/Full",
+      "NCD REVERSE POWER Line Current": "50",
+      "NCD REVERSE POWER Line Voltage": "59",
+      "NCD REVERSE POWER Status": "Established",
+      "NCD REVERSE POWER Temperature": "59",
+      "nbiMapResults": {
+        "NCD_UNID_PORT_ADMIN_STATE": "Unlocked",
+        "NCD_UNID_PORT_OPERATIONAL_STATE": "Down",
+        "NCD_UNID_ETHERNET_PORT_SPEED_AND_DUPLEX": "1000/Full",
+        "NCD_UNID_ETHERNET_PORT_CONFIGURATION": "1000/Full",
+        "NCD_REVERSE_POWER_Line_Current": "50",
+        "NCD_REVERSE_POWER_Line_Voltage": "59",
+        "NCD_REVERSE_POWER_Status": "Established",
+        "NCD_REVERSE_POWER_Temperature": "59"
+      }
+    }
+  }
+}
