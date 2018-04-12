@@ -22,7 +22,8 @@ import java.util.stream.Stream;
  */
 public class MapperService {
     // Create or retrieve an engine
-    final static JexlEngine jexl = new JexlBuilder().create();
+    private final static JexlEngine jexl = new JexlBuilder().create();
+    private final static ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Read File from resource file
@@ -74,89 +75,95 @@ public class MapperService {
     private static Object getValue(String value, JexlContext jc) {
         if (value.contains("expr#")) {
             String expressionString = value.substring(value.indexOf("expr#") + 5);
-            System.out.println("final expression :: " + expressionString);
+            //System.out.println("final expression :: " + expressionString);
             JexlExpression e = jexl.createExpression(expressionString);
-            System.out.println("eval expression => " + e.getSourceText());
+            //System.out.println("eval expression => " + e.getSourceText());
 
             // Now evaluate the expression, getting the result
             Object o = e.evaluate(jc);
-            System.out.println("value => " + o);
-            return "" + o;
-        } else if (value.startsWith("lookup#(")) {
-            int start = value.indexOf("lookup#(") + "lookup#(".length();
-            String substr = value.substring(start);
-            int end = substr.indexOf(")");
-            return value.substring(start+2,end);
-        }
+            //System.out.println("value => " + o);
+            return o;
+        } 
         else
             return value;
     }
 
-    public static void print(JsonNode node) {
-        System.out.println(node);
+    private final static void printMessage(int counter, long startTime) {
+        System.out.println("Time taken for translation " + (counter++) + " " + (System.currentTimeMillis() - startTime));
+    }
+
+    private String runBusinessRules(final String request,
+                                    final String role,
+                                    final String channel,
+                                    final String key) {
+
+        try {
+
+            String data = request;
+            String templateJson = readFile("mapper_" + key + ".json");
+            String scriptFile = readFile("mapper_" + key + "_rr.js");
+            JexlScript script = jexl.createScript(scriptFile);
+            int counter = 1;
+
+            long startTime = System.currentTimeMillis();
+            data = data.replace("\\r\\n", "")
+                    .replace("\\", "")
+                    .replace("\"{", "{")
+                    .replace("}\"", "}");
+            printMessage(counter++, startTime);
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+            JsonNode jsonTree = mapper.readTree(data);
+            printMessage(counter++, startTime);
+            JexlContext jc = new MapContext();
+            jc.set("input", jsonTree);
+
+            jc.set("rr", new ArrayList<String>());
+            jc.set("rrText", new ArrayList<String>());
+            jc.set("result", "1");
+
+            // Execute script and add output variable to context
+            script.execute(jc);
+            printMessage(counter++, startTime);
+            //System.out.println("variables => " + script.getPragmas() + "," + script.getVariables());
+
+            //System.out.println("Raw api response => " + mapper.writeValueAsString(jsonTree));
+
+            // Populate template json
+            Pattern pattern = Pattern.compile("(\\{)(\\S+)(\\})");
+            Matcher matcher = pattern.matcher(templateJson);
+
+            while (matcher.find()) {
+                String jsonPointer = matcher.group(2);
+                JsonNode node = jsonTree.at(jsonPointer.trim());
+                if (node != null) {
+                    //System.out.println(jsonPointer + " => " + node.asText());
+                    templateJson = templateJson.replace("{" + jsonPointer + "}", node.asText());
+                } else {
+                    //System.out.println(jsonPointer + " => null");
+                }
+            }
+            printMessage(counter++, startTime);
+            //System.out.println("translated json => " + templateJson);
+
+            //JsonNode rootNode =
+            Map<String, Object> valueMap = mapper.readValue(templateJson, Map.class);
+
+            evaluateDataMap(valueMap, jc);
+
+            System.out.println("Time taken for translation " + (counter++) + " " + (System.currentTimeMillis() - startTime));
+            return mapper.writeValueAsString(valueMap);
+
+        } catch(Exception ex){
+            throw new RuntimeException(ex);
+        }
+
     }
 
     public static void main(String[] args) throws Exception {
-
-        String templateJson = readFile("template.json");
-
+        MapperService mapperService = new MapperService();
         String data = readFile("nal_response.json");
-        data = data.replace("\\r\\n","").replace("\\","").replace("\"{","{").replace("}\"","}");
-
-        //System.out.println(data);
-
-        //final String apiRequest = readFile("nal_api_response.json");
-
-        ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        JsonNode jsonTree = mapper.readTree(data);
-        JexlContext jc = new MapContext();
-        jc.set("input", jsonTree);
-
-        System.out.println("Raw api response => " + mapper.writeValueAsString(jsonTree));
-
-        // Populate template json
-        Pattern pattern = Pattern.compile("(\\{)(\\S+)(\\})");
-        Matcher matcher = pattern.matcher(templateJson);
-
-        while(matcher.find()) {
-            String jsonPointer = matcher.group(2);
-            JsonNode node = jsonTree.at(jsonPointer.trim());
-            if (node != null) {
-                System.out.println(jsonPointer + " => " + node.asText());
-                templateJson = templateJson.replaceAll("{" + jsonPointer + "}", node.asText());
-            } else {
-                System.out.println(jsonPointer + " => null");
-            }
-        }
-
-        System.out.println("translated json => " + templateJson);
-
-        //JsonNode rootNode =
-        Map<String, Object> valueMap = mapper.readValue(templateJson, Map.class);
-
-        evaluateDataMap(valueMap, jc);
-
-       // Map map = updateMasterMap(valueMap, mapper.readValue(apiRequest, Map.class));
-
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        System.out.println("new json document "  + mapper.writeValueAsString(valueMap));
-    }
-
-    private static Map updateMasterMap(Map<String, Object> valueMap, Map map) {
-        Set<Map.Entry<String, Object>> enteries = valueMap.entrySet();
-        for (Map.Entry<String, Object> entry : enteries) {
-            if(valueMap.get(entry.getKey()) == null) {
-                map.put(entry.getKey(), entry.getValue());
-            } else {
-                if(entry.getValue() instanceof Map && map.get(entry.getKey()) instanceof Map) {
-                    updateMasterMap((Map<String, Object>)entry.getValue(), (Map) map.get(entry.getKey()));
-                } else {
-                    map.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        return map;
+        System.out.println("Json Response =>\n" + mapperService.runBusinessRules(data, "", "" , "ncdstatus"));
     }
 }

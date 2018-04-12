@@ -113,7 +113,7 @@ public class SpelExample {
         data = data.replace("\r\n","").replace("\\\"","");
 
 
-        final String apiRequest = readFile("nal_api_response.json");
+        //final String apiRequest = readFile("nal_api_response.json");
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -150,12 +150,12 @@ public class SpelExample {
         //evaluateJsonNode(rootNode, jc);
         evaluateDataMap(valueMap, jc);
 
-        Map map = updateMasterMap(valueMap, mapper.readValue(apiRequest, Map.class));
+        //Map map = updateMasterMap(valueMap, mapper.readValue(apiRequest, Map.class));
 
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         //System.out.println("value map json " + mapper.writeValueAsString(valueMap));
 
-        System.out.println("new json document "  + mapper.writeValueAsString(map));
+        //System.out.println("new json document "  + mapper.writeValueAsString(map));
 
         // Create an expression
 //        String jexlExp = "data.get('event').get('properties').get('weatherF') > 100 " +
